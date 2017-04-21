@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+  "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+  
+<tiles-definitions>
+
+  <definition name="defaultTemplate" template="/WEB-INF/views/defaultTemplate.jsp">
+    <put-attribute name="title" value="Basis" />
+    <put-attribute name="header" value="/WEB-INF/views/defaultHeader.jsp" />
+    <put-attribute name="content" value="/WEB-INF/views/defaultContent.jsp" />
+    <put-attribute name="footer" value="/WEB-INF/views/defaultFooter.jsp" />  
+  </definition>
+  
+  <definition name="printTemplate" template="/WEB-INF/views/printTemplate.jsp">
+    <put-attribute name="title" value="Basis" />
+    <put-attribute name="content" value="/WEB-INF/views/defaultContent.jsp" />
+  </definition>
+  
+  <definition name="login" extends="defaultTemplate">
+    <put-attribute name="title" value="Basis - Login" />
+    <put-attribute name="content" value="/WEB-INF/views/login.jsp" />
+  </definition>
+  
+  <definition name="main" extends="defaultTemplate">
+    <put-attribute name="title" value="Basis - Home" />
+    <put-attribute name="content" value="/WEB-INF/views/main.jsp" />
+  </definition>  
+  
+  <definition name="businessPlan" extends="printTemplate">
+    <put-attribute name="title" value="Basis - Home" />
+    <put-attribute name="content" value="/WEB-INF/views/businessPlan.jsp" />
+    <put-attribute name="comments" value="/WEB-INF/views/comments.jsp" cascade="true" />
+    <put-attribute name="categorizedQuoteMetrics" value="/WEB-INF/views/categorizedQuoteMetricsBP.jsp" cascade="true" />
+    <put-attribute name="pricing" value="/WEB-INF/views/pricing.jsp" cascade="true" />
+  </definition>
+  
+  <definition name="generalError" extends="defaultTemplate">
+    <put-attribute name="title" value="Basis - Error" />
+    <put-attribute name="content" value="/WEB-INF/views/generalError.jsp" />
+  </definition>  
+    
+  <definition name="saveSuccess" extends="defaultTemplate">
+    <put-attribute name="title" value="Basis - Saved Successfully" />
+    <put-attribute name="content" value="/WEB-INF/views/saveSuccess.jsp" />
+  </definition>  
+    
+  <definition name="entryCustomer" extends="defaultTemplate">
+    <put-attribute name="title" value="Basis - Quote entry" />
+    <put-attribute name="content" value="/WEB-INF/views/entryCustomer.jsp" />
+    <put-attribute name="sidebar" value="/WEB-INF/views/entrySidebar.jsp" cascade="true" />
+  </definition>  
+  
+  <definition name="entryMetric" extends="defaultTemplate">
+    <put-attribute name="title" value="Basis - Quote Metric" />
+    <put-attribute name="content" value="/WEB-INF/views/entryMetric.jsp" />
+    <put-attribute name="sidebar" value="/WEB-INF/views/entrySidebar.jsp" cascade="true" />
+    <put-attribute name="categorizedQuoteMetrics" value="/WEB-INF/views/categorizedQuoteMetrics.jsp" cascade="true" />
+  </definition>  
+  
+  <definition name="entryQuote" extends="defaultTemplate">
+    <put-attribute name="title" value="Basis - Quote" />
+    <put-attribute name="content" value="/WEB-INF/views/entryQuote.jsp" />
+    <put-attribute name="sidebar" value="/WEB-INF/views/entrySidebar.jsp" cascade="true" />
+    <put-attribute name="categorizedQuoteMetrics" value="/WEB-INF/views/categorizedQuoteMetrics.jsp" cascade="true" />
+  </definition>  
+  
+  <definition name="entryMTS" extends="defaultTemplate">
+    <put-attribute name="title" value="Basis - MTS" />
+    <put-attribute name="content" value="/WEB-INF/views/entryMTS.jsp" />
+    <put-attribute name="sidebar" value="/WEB-INF/views/entrySidebar.jsp" cascade="true" />
+  </definition>  
+
+  <definition name="customerQuote" extends="defaultTemplate">
+    <put-attribute name="title" value="Basis - Customer Quote" />
+    <put-attribute name="content" value="/WEB-INF/views/customerQuote.jsp" />
+    <put-attribute name="sidebar" value="/WEB-INF/views/entrySidebar.jsp" cascade="true" />
+    <put-attribute name="pricing" value="/WEB-INF/views/pricing.jsp" cascade="true" />
+  </definition>  
+
+  <definition name="entryRisk" extends="defaultTemplate">
+    <put-attribute name="title" value="Basis - Risk" />
+    <put-attribute name="content" value="/WEB-INF/views/entryRisk.jsp" />
+    <put-attribute name="sidebar" value="/WEB-INF/views/entrySidebar.jsp" cascade="true" />
+  </definition>  
+  
+  <definition name="submitSuccess" extends="defaultTemplate">
+    <put-attribute name="title" value="Basis - Submitted successfully" />
+    <put-attribute name="content" value="/WEB-INF/views/submitSuccess.jsp" />
+  </definition>  
+  
+  <definition name="submitFail" extends="defaultTemplate">
+    <put-attribute name="title" value="Basis - Submitted fail" />
+    <put-attribute name="content" value="/WEB-INF/views/submitFail.jsp" />
+  </definition>  
+  
+</tiles-definitions>

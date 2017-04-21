@@ -1,0 +1,614 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.leanlogistics.squotem.model">
+
+    <!--  Mapping types for enum -->
+    <typedef class="com.leanlogistics.squotem.mappingutils.UserTypeMapper" name="UserTypeMapper" />
+    <typedef class="com.leanlogistics.squotem.mappingutils.QuoteWorkflowStatusMapper" name="QuoteWorkflowStatusMapper" />
+    <typedef class="com.leanlogistics.squotem.mappingutils.FeeCategoryMapper" name="FeeCategoryMapper" />
+    <typedef class="com.leanlogistics.squotem.mappingutils.SpecialQuoteCostItemMapper" name="SpecialQuoteCostItemMapper" />
+    <typedef class="com.leanlogistics.squotem.mappingutils.CustomerTypeMapper" name="CustomerTypeMapper" />
+    <typedef class="com.leanlogistics.squotem.mappingutils.MetricDataTypeMapper" name="MetricDataTypeMapper" />    
+    <typedef class="com.leanlogistics.squotem.mappingutils.MetricDisplayOptionTypeMapper" name="MetricDisplayOptionTypeMapper" />
+    <typedef class="com.leanlogistics.squotem.mappingutils.MTSScopeAnswerMapper" name="MTSScopeAnswerMapper" />
+    <typedef class="com.leanlogistics.squotem.mappingutils.MatrixStatusMapper" name="MatrixStatusMapper" />
+    <typedef class="com.leanlogistics.squotem.mappingutils.MetricGroupMapper" name="MetricGroupMapper" />
+    <typedef class="com.leanlogistics.squotem.mappingutils.QuoteActionLevelMapper" name="QuoteActionLevelMapper" />
+
+    <class name="User" table="User">
+        <id name="id" column="user_id">
+            <generator class="increment"/>
+        </id>
+        <property name="userName" column="user_name"/>
+        <property name="firstName" column="first_name"/>
+        <property name="lastName" column="last_name"/>
+        <property name="password" column="passw"/>
+        <property name="userType" column="user_type" type="UserTypeMapper" />
+        <property name="active" column="status"/>
+        <property name="quoteVisibility" column="quote_visibility"/>
+        <property name="priceVisibility" column="price_visibility"/>
+        <property name="approvalLevel" column="approval_level" type="QuoteActionLevelMapper"/>
+        <property name="notificationType" column="notification_type" type="QuoteActionLevelMapper"/>
+        <property name="eMail" column="email"/>    
+    </class>
+    
+    <class name="Customer" table="Customer">
+        <id name="id" column="customer_id">
+            <generator class="increment"/>
+        </id>
+        <property name="name" column="name"/>
+        <property name="city" column="city"/>
+        <!-- property name="state" column="state"/ -->
+        <property name="projectSponsor" column="project_sponsor"/>
+        <property name="sponsorPhone" column="sponsor_phone"/>
+        <many-to-one name="country" 
+                     class="Country"
+                     column="country_code" 
+                     cascade="none"
+                     lazy="false" /> 
+        <many-to-one name="state" 
+                     class="State"
+                     column="state_short_name" 
+                     cascade="none"
+                     lazy="false" />
+        <many-to-one name="businessSector" 
+                     class="BusinessSector"
+                     column="industry_code_id" 
+                     not-null="false"
+                     cascade="none" 
+                     lazy="false" />
+        <property name="customerType" column="customer_type" type="CustomerTypeMapper" />                                           
+    </class>
+    
+    <class name="ProductCategory" table="Product_Catg">
+        <id name="id" column="product_catg_id">
+            <generator class="increment"/>
+        </id>
+        <property name="description" column="description"/>
+        <property name="active" column="status"/>        
+    </class>    
+    
+    <class name="QuoteProduct" table="Quote_Product">
+        <id name="id" column="quote_product_id">
+            <generator class="identity"/>
+        </id>
+        <many-to-one name="quote" 
+                     class="Quote"
+                     column="quote_id" 
+                     not-null="true"
+                     cascade="none" />
+        <many-to-one name="productCategory" 
+                     class="ProductCategory"
+                     column="product_catg_id" 
+                     not-null="true"
+                     lazy="false"
+                     cascade="none" />                     
+        <property name="customerQuoteImpl" column="cust_quote_impl"/>
+        <property name="customerQuoteMonthly" column="cust_quote_monthly"/>        
+    </class>    
+    
+    <class name="Matrix" table="Matrix">
+        <id name="id" column="matrix_id">
+            <generator class="increment"/>
+        </id>
+        <property name="name" column="name"/>
+        <property name="description" column="description"/>
+        <property name="createDate" column="create_date"/>
+        <property name="mtsMatrixId" column="matrix_mts_id"/> 
+        <property name="status" column="status" type="MatrixStatusMapper" />
+        <many-to-one name="budgetaryImplCostModel" 
+                     class="CostModel"
+                     column="budget_impl_cost_model_id" 
+                     cascade="none" 
+                     lazy="false" />
+        <many-to-one name="budgetaryMonthlyCostMode" 
+                     class="CostModel"
+                     column="budget_month_cost_model_id" 
+                     cascade="none" 
+                     lazy="false" />                                     
+    </class>
+    
+    <class name="Quote" table="Quote">
+        <id name="id" column="quote_id">
+            <generator class="identity"/>
+        </id>    
+        <property name="quoteNumber" column="quote_num" />
+        <property name="revisionNumber" column="revision_num"/>
+        <many-to-one name="matrix" 
+                     class="Matrix"
+                     column="matrix_id" 
+                     not-null="true"
+                     lazy="false"
+                     cascade="none" />
+        <many-to-one name="customer" 
+                     class="Customer"
+                     column="customer_id" 
+                     not-null="true"
+                     cascade="none" 
+                     lazy="false" />
+        <many-to-one name="author" 
+                     class="User"
+                     column="author_user_id" 
+                     not-null="true"
+                     cascade="none" lazy="false" />
+        <many-to-one name="modifiedBy" 
+                     class="User"
+                     column="modified_by" 
+                     not-null="true"
+                     cascade="none" lazy="false" />
+        <idbag name="productCategories" table="Quote_Product" cascade="persist" lazy="false">
+           <collection-id column="quote_product_id" type="long">
+             <generator class="increment"/>
+           </collection-id>  
+           <key column="quote_id"/>
+            <many-to-many column="product_catg_id"
+               class="ProductCategory"/>
+        </idbag>                     
+        <many-to-one name="salesDirector" 
+                     class="User"
+                     column="sales_director" 
+                     not-null="true"
+                     cascade="none" lazy="false" />
+        <property name="businessConsultant" column="business_consultant" />
+        <property name="partnerReferenced" column="partner_reference" />
+        <property name="createDate" column="create_date" />      
+        <property name="status" column="status" type="QuoteWorkflowStatusMapper" />
+        <property name="effectiveDate" column="effective_date" />
+        <property name="expireDate" column="expire_date" />
+        <property name="terms" column="terms_months" />
+        <property name="modifiedDate" column="modified_date" />
+        <property name="mtsAnnualLoadCount" column="mts_annual_load_cnt"/>               
+        <property name="mtsScopedWeeklyLoadCount" column="mts_scope_weekly_load_cnt"/>
+        <property name="mtsAnnualPrice" column="mts_annual_price"/>
+        <property name="mtsCustomerQuoteImpl" column="mts_cust_quote_impl"/>
+        <property name="mtsCustomerQuoteMonthly" column="mts_cust_quote_monthly"/>
+        <property name="hasMts" column="has_mts"/>
+        <property name="activeRevision" column="active_rev"/>
+        <property name="budgetaryImplCost" column="budgetary_quote_impl"/>
+        <property name="budgetaryMonthlyCost" column="budgetary_quote_monthly"/>
+        <property name="marketImplCost" column="market_quote_impl"/>
+        <property name="marketMonthlyCost" column="market_quote_monthly"/>
+    </class>
+    
+    <class name="QuoteMetric" table="Quote_Metric">
+        <id name="id" column="quote_metric_id">
+            <generator class="identity"/>
+        </id>    
+        <many-to-one name="quote" 
+                     class="Quote"
+                     column="quote_id" 
+                     not-null="true"
+                     cascade="none" />
+        <many-to-one name="metric" 
+                     class="Metric"
+                     column="metric_id" 
+                     not-null="true"
+                     lazy="false"
+                     cascade="none" />                     
+        <property name="metricValue" column="metric_value" />      
+        <property name="booleanValue" column="boolean_value" />      
+    </class>
+
+    <class name="Metric" table="Metric">
+        <id name="id" column="metric_id">
+            <generator class="increment"/>
+        </id>
+        <property name="description" column="description"/>
+        <property name="mnemonic" column="mnemonic"/>
+        <property name="dataType" column="metric_data_type" type="MetricDataTypeMapper"/>
+        <many-to-one name="category" 
+                     class="MetricCategory"
+                     column="metric_catg_id" 
+                     not-null="true"
+                     cascade="none"
+                     lazy="false" />        
+        <property name="sortOrder" column="sort_order"/>
+        <property name="isTotal" column="is_total"/>
+        <property name="secDescription" column="sec_description"/>                     
+    </class>
+    
+    
+    <class name="MetricCategory" table="Metric_Catg">
+        <id name="id" column="metric_catg_id">
+            <generator class="increment"/>
+        </id>
+        <property name="description" column="description"/>
+        <property name="optionType" column="catg_option_type" type="MetricDisplayOptionTypeMapper"/>
+        <property name="sortOrder" column="sort_order"/>
+        <property name="metricGroup" column="metric_group" type="MetricGroupMapper"/>        
+    </class>
+    
+    <class name="CostItemCategory" table="Cost_Item_Catg">
+        <id name="id" column="cost_item_catg_id">
+            <generator class="increment"/>
+        </id>
+        <property name="description" column="description"/>
+    </class>    
+
+    <class name="CostItem" table="Cost_Item">
+        <id name="id" column="cost_item_id">
+            <generator class="increment"/>
+        </id>
+        <property name="description" column="description"/>
+        <property name="descriptionDetail" column="description_detail"/>
+        <many-to-one name="productCategory" 
+                     class="ProductCategory"
+                     column="product_catg_id" 
+                     not-null="true"
+                     cascade="none" />                     
+        <many-to-one name="itemCategory" 
+                     class="CostItemCategory"
+                     column="cost_item_catg_id" 
+                     not-null="true"
+                     cascade="none"
+                     lazy="false" />
+        <property name="sortOrder" column="sort_order"/>                                                  
+    </class>
+    
+    <class name="CostModel" table="Cost_Model">
+        <id name="id" column="cost_model_id">
+            <generator class="increment"/>
+        </id>
+        <property name="name" column="name"/>
+        <property name="xmlContent" column="xml"/>
+        <!--  TODO: Details... -->
+    </class>    
+        
+
+    <class name="MatrixCostItem" table="Matrix_Cost_Item">
+        <id name="id" column="matrix_cost_item_id">
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="costItem" 
+                     class="CostItem"
+                     column="cost_item_id" 
+                     not-null="true"
+                     cascade="none"
+                     lazy="false" />                     
+        <many-to-one name="costModel" 
+                     class="CostModel"
+                     column="cost_model_id" 
+                     not-null="false"
+                     cascade="none" 
+                     lazy="false" />
+        <many-to-one name="matrix" 
+                     class="Matrix"
+                     column="matrix_id" 
+                     not-null="true"
+                     cascade="none" />                                          
+        <property name="simpleCost" column="simple_cost"/>
+        <property name="feeCategory" column="fee_catg" type="FeeCategoryMapper" />
+        <property name="forced" column="forced"/>                                                          
+        <property name="alternateColor" column="alternate_color" />
+        <property name="required" column="required"/>                                                          
+    </class>
+    
+    <class name="CostAdjustment" table="Cost_Adjustment">
+        <id name="id" column="cost_adjustment_id">
+            <generator class="increment"/>
+        </id>
+        <property name="description" column="description"/>
+        <many-to-one name="productCategory" 
+                     class="ProductCategory"
+                     column="product_catg_id" 
+                     not-null="true"
+                     cascade="none" />
+        <property name="feeCategory" column="fee_catg" type="FeeCategoryMapper" />
+        <property name="active" column="status"/>                                                                                                    
+    </class>
+    
+    <class name="MatrixCostAdjustment" table="Matrix_Cost_Adj">
+        <id name="id" column="matrix_cost_adj_id">
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="costAdjustment" 
+                     class="CostAdjustment"
+                     column="cost_adjustment_id" 
+                     not-null="true"
+                     cascade="none"
+                     lazy="false" />                     
+        <many-to-one name="matrix" 
+                     class="Matrix"
+                     column="matrix_id" 
+                     not-null="true"
+                     cascade="none" />                                          
+    </class>
+    
+    <class name="QuoteCostItem" table="Quote_Cost_Item">
+        <id name="id" column="quote_cost_item_id">
+            <generator class="identity"/>
+        </id>    
+        <many-to-one name="quote" 
+                     class="Quote"
+                     column="quote_id" 
+                     not-null="true"
+                     cascade="none" />
+        <many-to-one name="costItem" 
+                     class="CostItem"
+                     column="cost_item_id" 
+                     not-null="true"
+                     lazy="false"
+                     cascade="none" />                     
+        <property name="enabled" column="enabled" />
+        <property name="required" column="required"/>
+        <property name="special" column="special" type="SpecialQuoteCostItemMapper" />
+        <property name="feeCategory" column="fee_catg" type="FeeCategoryMapper" />
+        <property name="cost" column="cost"/>
+        <many-to-one name="costModel" 
+                     class="CostModel"
+                     column="cost_model_id" 
+                     not-null="false"
+                     cascade="none" 
+                     lazy="false" />
+    </class>    
+    <class name="QuoteCostAdjustment" table="Quote_Cost_Adj">
+        <id name="id" column="quote_cost_adj_id">
+            <generator class="identity"/>
+        </id>    
+        <many-to-one name="quote" 
+                     class="Quote"
+                     column="quote_id" 
+                     not-null="true"
+                     cascade="none" />
+        <many-to-one name="costAdjustment" 
+                     class="CostAdjustment"
+                     column="cost_adjustment_id" 
+                     not-null="true"
+                     lazy="false"
+                     cascade="none" />
+        <property name="comment" column="comment" />                     
+        <property name="feeCategory" column="fee_catg" type="FeeCategoryMapper" />
+        <property name="cost" column="cost"/>
+    </class>    
+        
+    <class name="Country" table="Country_Code">
+        <id name="countryCode" column="country_code"/>
+        <property name="countryName" column="country_name"/>
+    </class>
+    
+    <class name="State" table="Country_Code_State">
+        <id name="stateShortName" column="state_short_name"/>
+        <property name="countryCode" column="country_code"/>
+        <property name="stateName" column="state_name"/>
+    </class>
+    
+    <class name="BusinessSector" table="Industry_Code">
+        <id name="id" column="industry_code_id"/>
+        <property name="description" column="description"/>
+    </class>
+    
+    <class name="MatrixMetric" table="Matrix_Metric">
+        <id name="id" column="matrix_metric_id">
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="metric" 
+                     class="Metric"
+                     column="metric_id" 
+                     not-null="true"
+                     cascade="none"
+                     lazy="false" />                     
+        <many-to-one name="matrix" 
+                     class="Matrix"
+                     column="matrix_id" 
+                     not-null="true"
+                     cascade="none" />
+        <property name="required" column="required"/>
+        <property name="defaultValue" column="default_value" />        
+    </class>
+    
+    <class name="MTSMatrix" table="Matrix_MTS">
+        <id name="id" column="matrix_mts_id">
+            <generator class="increment"/>
+        </id>
+        <property name="name" column="name"/>
+        <property name="description" column="description"/>
+        <property name="baselineWeeklyLoadCount" column="baseline_weekly_load_cnt"/> 
+    </class>
+    
+    <class name="MTSScopeQuestionCategory" table="MTS_Scope_Catg">
+        <id name="id" column="mts_scope_catg_id">
+            <generator class="increment"/>
+        </id>
+        <property name="description" column="description"/>
+        <property name="sortOrder" column="display_order"/>        
+    </class>    
+
+    <class name="MTSMatrixScopeQuestion" table="Matrix_MTS_Scope">
+        <id name="id" column="matrix_mts_scope_id">
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="category" 
+                     class="MTSScopeQuestionCategory"
+                     column="mts_scope_catg_id" 
+                     not-null="true"
+                     cascade="none"
+                     lazy="false" />        
+        <many-to-one name="mtsMatrix" 
+                     class="MTSMatrix"
+                     column="matrix_mts_id" 
+                     not-null="true"
+                     cascade="none" />                                          
+        <property name="question" column="question"/>
+        <property name="baselineScopeImpact" column="baseline_scope_impact"/>
+        <property name="headcountImpact" column="headcount_impact"/>
+        <property name="sortOrder" column="display_order"/>        
+    </class>
+    
+    <class name="QuoteMTSScopeAnswer" table="Quote_MTS_Scope">
+        <id name="id" column="quote_mts_scope_id">
+            <generator class="identity"/>
+        </id>    
+        <many-to-one name="quote" 
+                     class="Quote"
+                     column="quote_id" 
+                     not-null="true"
+                     cascade="none" />
+        <many-to-one name="mtsScopeQuestion" 
+                     class="MTSMatrixScopeQuestion"
+                     column="matrix_mts_scope_id" 
+                     not-null="true"
+                     lazy="false"
+                     cascade="none" />                     
+        <property name="answer" column="answer" type="MTSScopeAnswerMapper" />
+        
+        <property name="baselineScopeImpact" column="baseline_scope_impact"/>
+        <property name="headcountImpact" column="headcount_impact"/>
+    </class>
+    
+    <class name="MTSRole" table="MTS_Role_Master">
+        <id name="id" column="mts_role_master_id">
+            <generator class="increment"/>
+        </id>
+        <property name="description" column="description"/>
+    </class>    
+    
+    <class name="MTSMatrixRoleCost" table="Matrix_MTS_Role_Cost">
+        <id name="id" column="matrix_mts_role_cost_id">
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="mtsRole" 
+                     class="MTSRole"
+                     column="mts_role_master_id" 
+                     not-null="true"
+                     cascade="none"
+                     lazy="false" />        
+        <many-to-one name="mtsMatrix" 
+                     class="MTSMatrix"
+                     column="matrix_mts_id" 
+                     not-null="true"
+                     cascade="none" />                                          
+        <property name="costPer" column="cost_per"/>
+        <property name="margin" column="margin"/>
+    </class>
+    
+    <class name="QuoteMTSRoleCost" table="Quote_MTS_Role_Cost">
+        <id name="id" column="quote_mts_role_cost_id">
+            <generator class="identity"/>
+        </id>    
+        <many-to-one name="quote" 
+                     class="Quote"
+                     column="quote_id" 
+                     not-null="true"
+                     cascade="none" />
+        <many-to-one name="mtsRoleCost" 
+                     class="MTSMatrixRoleCost"
+                     column="matrix_mts_role_cost_id" 
+                     not-null="true"
+                     lazy="false"
+                     cascade="none" />                     
+        <many-to-one name="mtsRole" 
+                     class="MTSRole"
+                     column="mts_role_master_id" 
+                     not-null="true"
+                     lazy="false"
+                     cascade="none" />                     
+        <property name="roleCountCalculated" column="role_count_calc"/>
+        <property name="roleCountAdditional" column="role_count_additional"/>
+        <property name="roleCost" column="role_cost"/>
+    </class>
+    
+    <class name="MTSMatrixRoleRelation" table="Matrix_MTS_Role_Relation">
+        <id name="id" column="matrix_mts_role_relation_id">
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="mtsRole" 
+                     class="MTSRole"
+                     column="mts_role_master_id" 
+                     not-null="true"
+                     cascade="none"
+                     lazy="false" />        
+        <many-to-one name="mtsMatrix" 
+                     class="MTSMatrix"
+                     column="matrix_mts_id" 
+                     not-null="true"
+                     cascade="none" />                                          
+        <property name="rangeStart" column="start"/>
+        <property name="rangeEnd" column="end"/>
+        <property name="roleCount" column="role_count"/>
+        
+    </class>
+    
+    <class name="QuoteNote" table="Quote_Note">
+        <id name="id" column="quote_note_id">
+            <generator class="identity"/>
+        </id>
+        <many-to-one name="quote" 
+                     class="Quote"
+                     column="quote_id" 
+                     not-null="true"
+                     cascade="none" />
+        <many-to-one name="user" 
+                     class="User"
+                     column="user_id" 
+                     not-null="true"
+                     cascade="none" lazy="false" />
+        <property name="comment" column="comment"/>
+        <property name="createDate" column="create_date" />        
+    </class>
+    
+    <class name="RiskAnalysisCategory" table="Risk_Analysis_Catg">
+        <id name="id" column="risk_analysis_catg_id">
+            <generator class="increment"/>
+        </id>
+        <property name="description" column="description"/>
+        <property name="sortOrder" column="sort_order"/>        
+    </class>
+    
+    <class name="RiskAnalysis" table="Risk_Analysis">
+        <id name="id" column="risk_analysis_id">
+            <generator class="increment"/>
+        </id>
+        <property name="description" column="description"/>
+        <many-to-one name="riskCategory" 
+                     class="RiskAnalysisCategory"
+                     column="risk_analysis_catg_id" 
+                     not-null="true"
+                     cascade="none"
+                     lazy="false" />
+        <property name="active" column="status"/>
+        <property name="sortOrder" column="sort_order"/>                                                  
+    </class>
+    
+    <class name="MatrixRiskAnalysis" table="Matrix_Risk_Analysis">
+        <id name="id" column="matrix_risk_analysis_id">
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="riskAnalysis" 
+                     class="RiskAnalysis"
+                     column="risk_analysis_id" 
+                     not-null="true"
+                     cascade="none"
+                     lazy="false" />                     
+        <many-to-one name="matrix" 
+                     class="Matrix"
+                     column="matrix_id" 
+                     not-null="true"
+                     cascade="none" />                                          
+    </class>
+    
+    <class name="QuoteRiskAnalysis" table="Quote_Risk_Analysis">
+        <id name="id" column="quote_risk_analysis_id">
+            <generator class="identity"/>
+        </id>    
+        <many-to-one name="quote" 
+                     class="Quote"
+                     column="quote_id" 
+                     not-null="true"
+                     cascade="none" />
+        <many-to-one name="riskAnalysis" 
+                     class="RiskAnalysis"
+                     column="risk_analysis_id" 
+                     not-null="true"
+                     lazy="false"
+                     cascade="none" />                     
+        <property name="comment" column="comment" />
+        <property name="riskLevel" column="risk_level"/>
+        <property name="enabled" column="enabled" />        
+    </class>    
+            
+</hibernate-mapping>

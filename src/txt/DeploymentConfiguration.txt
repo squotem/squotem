@@ -1,0 +1,28 @@
+1. ALLOW HTTP REQUESTS WITH MANY PARAMETERS
+
+This is a JBoss issue. Metrics are user defined. User can eventually define many metrics that are captured in a single form. In those cases, we can see the following exception:
+
+java.lang.IllegalStateException: More than the maximum number of request parameters (GET plus POST) for a single request ([512]) were detected. Any parameters beyond this limit have been ignored. To change this limit, set the maxParameterCount attribute on the Connector.
+ org.apache.tomcat.util.http.Parameters.addParameter(Parameters.java:199)
+ ...
+ 
+ In order to fix this, we need tu set up JBoss so it allows more than the predefined number of HTTP parameters in a single request:
+ 
+Jboss 7
+Step 1: Open standalone.xml file available in "jboss7\standalone\configuration" folder. **
+Step 2: Paste below code after </extensions> tag and change value as per your requirement.
+
+<system-properties>
+   <property name="org.apache.tomcat.util.http.Parameters.MAX_COUNT" value="2000"/>
+</system-properties>
+
+** Jboss may be using a configuration file other than standalone.xml. For example:  standalone-full.xml, standalone-full-ha.xml or standalone-ha.xml. If, after changing standalone.xml change is not reflected, change any of these other files
+
+Jboss 6 or lower
+Step 1: Open standalone.xml file available in "jboss6\standalone\configuration" folder.
+Step 2: Find connector tag same as follow and add maxParameterCount attribute.
+<connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http" maxParameterCount="1000" /> 
+
+Source: 
+http://www.javaquery.com/2013/12/javalangillegalstateexception-more-than.html
+

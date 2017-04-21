@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="QuoterApp" basedir="." default="deploy">
+
+    <property file="build.properties"/>
+	
+    <property name="src.dir" value="src"/>
+	
+    <property name="name" value="QuoterApp"/>	
+	
+    <property name="web.dir" value="WebContent"/>
+	
+    <!-- Directory into which the web application is built -->
+    <property name="build.dir"    value="${basedir}/build"/>	
+	
+    <property name="deploy.dir"    value="${basedir}/deploy"/>
+	
+    <!-- Configure the context path for this application -->
+    <property name="path"   value="/quoter"/>		
+	
+    <path id="master-classpath">
+        <fileset dir="${web.dir}/WEB-INF/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="../../lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${appserver.lib}">
+            <include name="*servlet*.jar"/>
+        </fileset>
+        <pathelement path="${build.dir}"/>
+    </path>	
+			
+    <target name="clean">
+        <delete dir="${deploy.dir}" />
+        <delete dir="${build.dir}" />
+    </target>
+
+    <target name="compile" description="Compile web application">
+        <mkdir dir="${build.dir}"/>
+        <javac destdir="${build.dir}" source="1.7" target="1.7" debug="true"
+            deprecation="false" optimize="false" failonerror="true" includeantruntime="false">
+            <src path="${src.dir}"/>
+            <classpath refid="master-classpath"/>
+        </javac>
+    	<copy todir="${build.dir}">
+            <fileset dir="${src.dir}">
+                <include name="**/*.properties" />
+            </fileset>    		
+        </copy>	
+    </target>
+
+    <target name="build" description="Build web application" depends="clean,compile">
+        <mkdir dir="${deploy.dir}"/>
+        <war destfile="${deploy.dir}/${name}.war"
+            webxml="${web.dir}/WEB-INF/web.xml">
+            <fileset dir="${web.dir}">
+                <include name="**/*.*"/>
+            </fileset>
+            <lib dir="${web.dir}/WEB-INF/lib"/>
+            <lib dir="../../lib">
+                <include name="*.jar"/>
+            </lib>
+            <classes dir="${build.dir}"/>
+        </war>
+    </target>
+
+    <target name="deploy" description="Install web application" depends="build">
+    	<copy file="${deploy.dir}/${name}.war" todir="${appserver.deploy}" />    	
+    </target>
+
+
+</project>

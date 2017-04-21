@@ -1,0 +1,62 @@
+<project name="Quoter" default="deploy" basedir=".">
+	<property file="build.properties" />
+	
+    <target name="deploy" depends="package">
+        <copy todir="${dir.deploy}">
+            <fileset dir="${dir.out}">
+                <include name="${artifact.jar}" />
+            </fileset>
+        </copy>
+    </target>	
+
+    <target name="package" depends="compile">
+        <jar basedir="${dir.classes}" destfile="${dir.out}/${artifact.jar}" >
+            <exclude name="com/leanlogistics/squotem/test/**"/>
+        </jar>
+    </target>
+        	
+    <target name="compile" depends="prepare">
+        <javac destdir="${dir.classes}"
+               debug="true">
+        	<src path="${dir.src}"/>
+        	<src path="${dir.test}"/>
+            <classpath>
+                <fileset dir="${dir.deploy}">
+                    <exclude name="${artifact.jar}" />
+                </fileset>
+            </classpath>
+        </javac>
+        <copy todir="${dir.classes}">
+        	<fileset dir="${dir.src}">
+        	  <include name="**/*.xml"/>
+        	  <include name="**/*.properties"/>
+        	</fileset>
+        </copy>    	
+    </target>
+	
+    <target name="prepare" depends="clean">
+        <mkdir dir="${dir.out}" />
+        <mkdir dir="${dir.classes}" />
+    </target>
+
+        	
+    <target name="clean">
+        <delete dir="${dir.classes}" />
+        <delete dir="${dir.out}" />
+        <delete dir="${dir.deploy}" includes="${artifact.jar}" />
+    </target>
+	
+    <target name="run-tests" depends ="compile" >
+        <junit showoutput="true" fork="true" >
+          <classpath>
+            <pathelement path="${dir.classes}"/>
+            <fileset dir="${dir.deploy}">
+                <exclude name="${artifact.jar}" />
+            </fileset>
+          </classpath>
+          <test name="com.leanlogistics.squotem.test.service.SquotemServiceBeanTest" haltonfailure="no"/>
+          <formatter usefile="false" type="brief"/>
+        </junit>
+    </target>
+	
+</project>

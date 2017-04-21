@@ -1,0 +1,173 @@
+
+**********
+ - FILE SYSTEM
+
+ 1- Create the base directory for Squotem. Most of the development files will reside inside this directory. For Windows, C:\Squotem is suggested as base directory. Make the changes in the file system paths used in the rest of this documents to make it work with other base directory path or other systems.
+
+**********
+ - SERVLET CONTAINER: TOMCAT 7
+
+ 1- Download Tomcat 7. If you are using Windows, the Service Installer version is recommended
+ 2- Install Tomcat in C:\Squotem\bundles\tomcat7
+ 4- Start Tomcat Service and check home page in browser: http:\\localhost:8080 Looks nice, right?
+ 5- Stop Tomcat Service, since we'll be using it from Eclipse
+ 
+**********
+  - SOURCE CODE
+
+ 1- Mercurial Client: LeanConnect uses Mercurial for its version control system. If you do not have a Mercurial client installed you can download TortoiseHG from
+   
+   http://tortoisehg.bitbucket.org/download/windows.html#win32
+
+ 2- Clone the LeanConnect-Squotem repository to C:\Squotem\src
+  
+    If you’re using TortoiseHG:
+
+    a. Open up windows explorer and navigate to C:\Squotem
+    b. Right click and select TortoiseHG > Clone…
+       Set Source to:
+        (Avantica) http://vm-avantica01.devl.not.leanlogistics.com/hg/leanconnect-squotem
+        (Lean) http://svn.leanlogistics.com/hg/squotem ?
+       Set Destination to: C:\Squotem\src
+       Click the Clone button  
+	
+ 3- Open repository in Tortoise client
+  - In TortoiseHg Workbench, select File > Open Repository
+  - Navigate to   C:\Squotem\src and click select folder 
+  - Once it's opened, rename from "src" to "Squotem - src"
+    
+**********
+ECLIPSE IDE
+
+  1- Install Eclipse IDE, from http://spring.io/tools/eclipse. Recommended version: Eclipse IDE for Java EE Developers, version 4.3.1 (Kepler)
+  2- Once it's installed, create a shortcut to execute it. It should be run with administrator privileges. In Windows, open shortcut properties, click Advanced and check run as an administrator 
+  
+**********
+SPRING PLUGIN
+  1- In Eclipse, select Help > Eclipse Marketplace   
+  2- In Search Text Box, enter "Spring Tool Suite" and do a search
+  3- from results, select "Sprint Tool Suite STS for Eclipse Kepler (4.3)" and press Install
+  
+  
+**********
+ECLIPSE SQL EXPLORER PLUGIN
+
+ We can use the Eclipse SQL Explorer plug in in order to interact with the data base
+
+ 1- In Eclipse, select Help > Install New Software
+ 2- In Work with..., click the Add button. Name: Eclipse SQL Explorer. Location: http://eclipsesql.sourceforge.net/
+ 3- Select the recently added Eclipse SQL Explorer site. In the list below, expand SQL Explorer and select the SR6 version and press install
+
+
+**********
+SETUP MYSQL JDBC DRIVER
+
+ 1- In Eclipse select Window > Preferences > SQL Explorer
+ 2- Select MySQL Driver and click edit
+ 3- Select Extra Class Path > Add JARS
+ 4- Select file C:\Squotem\src\lib\mysql-connector-java-5.1.27-bin.jar
+ 5- Click List Drivers... and select  com.mysql.jdbc.Driver
+
+**********
+SETUP MYSQL CONNECTION
+
+ 1- In Eclipse, select Window > Show View > Other
+ 2- From the List, select SQL Explorer > Connections
+ 3- Click on button "Create New Connection Profile"
+ 4- Name: Quoter DB, Driver: MySQL Driver, URL jdbc:mysql://vm-avantica01.devl.not.leanlogistics.com:3306/squotem, User: squotem, Password: Squ0t3m
+ 5- Test Connection
+
+**********
+IMPORT PROJECTS IN ECLIPSE
+
+A. QUOTER
+ 1- In Eclipse, select File > Import > General > Existing Projects into Workspace
+ 2- Root directory: C:\Squotem\src\projects\Quoter
+ 3- Click Select All then click Finish
+ 4- Add required jars to the project: Right Click over Quoter PROJECT, select Java Build path > Libraries. Click Add External Jars and select the following jars:
+  - antlr*.jar
+  - c3p0*.jar
+  - dom4j*.jar
+  - hibernate*.jar
+  - javassist*.jar
+  - jboss*.jar
+  - jeval.jar
+  - junit*.jar
+  - mchange-commons-java*.jar
+  - mysql-connector-java*.jar
+  
+B. QUOTER APP
+ 1- In Eclipse, select File > Import > General > Existing Projects into Workspace
+ 2- Root directory: C:\Squotem\src\projects\QuoterApp
+ 3- Click Select All then click Finish
+ 4- In order for the project to be recognized as Dynamic Web Project: Edit Project Properties, Project Facets, Enabled Dynamic Web Module, Java and JavaScript. Click OK.
+ 5- Add required jars to the project: Right Click over Quoter App, select Java Build path > Libraries. Click Add External Jars and select all jars located in C:\Squotem\src\lib *except* Quoter.jar
+ 6- Add Servlet API and JSP jars: Right click over Quoter App, select Java  Build path > Libraries. Click Add External Jars and select [Project_home]\bundles\tomcat7\lib\servlet-api.jar. (Where [Project_home] is C:\Squotem or the directory you chose as the base directory for your project. Repeat the process and add [Project_home]\bundles\tomcat7\lib\jsp-api.jar
+ 7- Add Web app libraries to the project: Right Click over Quoter App, select  Java Build path > Libraries. Click Add Library > Web App libraries. Select project QuoterApp and click Finish
+ 8- Add dependency to backend Project: Right Click over Quoter App, select  Java Build path > Projects. Click Add and select Quoter project. Click OK
+ 
+C. GLOBAL QUOTER PROJECTS
+1- In Eclipse, select File > Import > General > Existing Projects into Workspace
+2- Root directory: C:\Squotem\src\projects
+3- Click Select All then click Finish
+
+D. QUOTER DB 
+This contains the Sql scripts. Import this is you would like to open the sql files from Eclipse
+1- In Eclipse, select File > Import > General > Existing Projects into Workspace
+2- Root directory: C:\Squotem\src\db
+3- Click Select All then click Finish
+ 
+ 
+**********
+SETUP TOMCAT INTEGRATION WITH ECLIPSE
+ 
+ 1- In Eclipse, select Window > Preferences > Server > Runtime Environments > Add...
+ 2- Select Apache Tomcat v7.0
+ 3- Specify instalation directory to C:\Squotem\bundles\tomcat7
+ 4- Click Finish and OK
+ 5- Open the Servers view and click to create a new server
+ 6- Select Tomcat v7.0 server and Apache Tomcat v7.0 runtime environment
+ 7- Move QuoterApp to the right and click finish
+ 8- In Project Explorer, expand Servers > Tocat v7.0 Servet at... > and edit file Catalina.properties
+ 9- Locate property common.loader and at the following at the end of the current value
+ 
+ ,${catalina.home}/../../src/lib/*.jar
+ 
+ 10- Save Catalina.properties file
+ 
+ 
+ 
+**********
+BUILD WITH ANT
+
+Before pushing any changes, it's convenient to do a build using the official Ant script
+  
+
+  1. In Eclipse, create QuoterApp\build.properties
+    The only content for now is
+
+    appserver.lib=C:/Squotem/bundles/tomcat7/lib
+    appserver.deploy=C:/Squotem/bundles/tomcat7/webapps
+
+	You can get that version from other team member and adapt it as required
+	
+  2. Open Ant view in Eclipse and drag the following files to it
+     - Quoter\build.xml (Used when we want to build the Quoter back end project)
+	 - QuoterApp\build.xml (Used when we want to build the Quoter web application project)
+	 - QuoterProjects\projects\build.xml (QuoterProjects, used for the global build)
+  3. Expand the QuoterProjects and file and double click the "deploy" task (or just double click on the QuoterProjects file)  to test the build
+  
+	
+**********
+TEST APPLICATION INSIDE ECLIPSE
+
+We don't need to do run the Ant build in order  to test the aplication. If everything compiles well (as it should be) and auto build is enables in Eclipse (as it is by default) we just need to...
+
+
+1. Make sure Quoter project is built using Ant.  Expand Quoter Ant project and execute deploy target.
+2. Refresh QuoterApp project dependencies: right click over QuoterApp project and click Refresh
+3. Open Servers view and start Tomcat v7.0 server  
+4. Open browser and point to http://localhost:8080/QuoterApp/ 
+  
+You should see initial (login) page
+	
