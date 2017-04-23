@@ -178,7 +178,7 @@
 				</div>
 		
 				<div class="content-box ll-box">
-					<div class="block-header"><spring:message code="customer.leanlogistics.description" /></div>
+					<div class="block-header"><spring:message code="customer.blujaysolution.description" /></div>
 
 					<table class="width100">
 						<tr>
@@ -217,20 +217,6 @@
 				<div class="content-box quote-type-box">
 					<div class="block-header"><spring:message code="customer.information.description" /></div>
 						<table class="width100">
-							<tr>
-								<td>
-						    		<form:label path="productCategories"><spring:message code="customer.information.quoteType" /><span class="red">&nbsp;*</span></form:label>
-						    	</td>
-						    	<td>
-									<div id="quote-type">
-										<c:forEach var="productCategory" items="${productCategories}" >
-											<label><form:checkbox path="productCategoryIds" value="${productCategory.id}" disabled="true" checked="true"/>${productCategory.description}</label>
-										</c:forEach>
-										<input type="hidden" name="productCategoryIds" value="1"/>
-										<!-- label><form:checkbox path="hasMts" value="${productCategory.hasMts}"/><spring:message code="customer.information.mts" /></label-->
-									</div>
-								</td>
-							</tr>
 							<tr>
 								<td> 
 						    		<form:label path="effectiveDate"><spring:message code="customer.information.effectiveDate" /></form:label>

@@ -42,7 +42,7 @@
 	</div>
 
     <div class="content-box"> <!-- LeanLogistics info -->
-        <div class="block-header"><spring:message code="customer.leanlogistics.description" /></div>
+        <div class="block-header"><spring:message code="customer.blujaysolution.description" /></div>
         <div class="block-data">
             <div><!--<spring:message code="customer.leanlogistics.salesDirector" />&nbsp;--><c:out value="${quote.salesDirector.firstName}"/>&nbsp;<c:out value="${quote.salesDirector.lastName}"/></div>
             <div><!--<spring:message code="customer.leanlogistics.businessConsultant" />&nbsp;--><c:out value="${quote.businessConsultant}"></c:out></div>
