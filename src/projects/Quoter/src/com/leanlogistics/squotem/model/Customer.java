@@ -11,7 +11,16 @@ public class Customer {
     private State state;
 	private String projectSponsor;
     private String sponsorPhone;
-    private BusinessSector businessSector;
+    private String sfdcOpportunity;
+    public String getSfdcOpportunity() {
+		return sfdcOpportunity;
+	}
+
+	public void setSfdcOpportunity(String sfdcOpportunity) {
+		this.sfdcOpportunity = sfdcOpportunity;
+	}
+
+	private BusinessSector businessSector;
     private CustomerTypeCO customerType;
     
     public Customer() {        

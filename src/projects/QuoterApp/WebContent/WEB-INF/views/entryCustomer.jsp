@@ -173,6 +173,15 @@
 								<label id="sponsorPhone-lbl" class="hide"></label>
 					    	</td>
 						</tr>
+						<tr>
+					    	<td>
+								<form:label path="customer.sfdcOpportunity"><spring:message code="customer.sfdcOpportunity" /></form:label>
+					    	</td>
+					    	<td>
+								<form:input path="customer.sfdcOpportunity" maxlength="100"/> 
+								<label id="sfdcOpportunity-lbl" class="hide"></label>
+					    	</td>
+						</tr>
 					</table>
  				
 				</div>
@@ -217,6 +226,12 @@
 				<div class="content-box quote-type-box">
 					<div class="block-header"><spring:message code="customer.information.description" /></div>
 						<table class="width100">
+						<tr>
+						    	<td>
+										<input type="hidden" name="productCategoryIds" value="1"/>
+										<!-- label><form:checkbox path="hasMts" value="${productCategory.hasMts}"/><spring:message code="customer.information.mts" /></label-->
+								</td>
+						</tr>
 							<tr>
 								<td> 
 						    		<form:label path="effectiveDate"><spring:message code="customer.information.effectiveDate" /></form:label>
