@@ -37,6 +37,58 @@
         <property name="eMail" column="email"/>    
     </class>
     
+    
+     <class name="SubscriptionPricing" table="Subscription_Pricing">
+        <id name="id" column="subscription_pricing_id">
+            <generator class="increment"/>
+        </id>
+        <property name="minAnnualFrieghtSpend" column="annual_freight_spend_min"/>
+        <property name="maxAnnualFrieghtSpend" column="annual_freight_spend_max"/>
+        <property name="monthlyFee" column="monthly_fee"/>
+        <property name="annualFee" column="annual_fee"/>
+         <property name="costItemId" column="cost_item_id"/>
+          <property name="tier" column="tier"/>     
+    </class>
+    
+    <class name="License" table="License">
+        <id name="id" column="license_id">
+            <generator class="increment"/>
+        </id>
+        <property name="minAnnualFrieghtSpend" column="annual_freight_spend_min"/>
+        <property name="maxAnnualFrieghtSpend" column="annual_freight_spend_max"/>
+        <property name="licenseFee" column="license_fee"/>
+        <property name="maintenanceFee" column="maintenance_support"/>
+        <property name="firstYearPayment" column="first_year_payment"/>
+         <property name="costItemId" column="cost_item_id"/>
+          <property name="tier" column="tier"/>   
+    </class>
+    
+    <class name="PerTransactionPricing" table="Per_Transaction_Pricing">
+        <id name="id" column="id">
+            <generator class="increment"/>
+        </id>
+        <property name="minFreight" column="min_freight"/>
+        <property name="maxFreight" column="max_freight"/>
+        <property name="monthlyMinimum" column="monthly_minimum"/>
+        <property name="annualTransactionAllowance" column="annual_transaction_allowance"/>
+        <property name="annualPrice" column="annual_price"/>
+         <property name="costItemId" column="cost_item_id"/>
+          <property name="tier" column="tier"/>
+           <property name="pricePerTransaction" column="price_per_transaction"/>      
+    </class>
+    
+    <class name="TieredPricing" table="Tiered_Price_Blocks">
+        <id name="id" column="id">
+            <generator class="increment"/>
+        </id>
+        <property name="minTransactions" column="min_transactions"/>
+        <property name="maxTransactions" column="max_transactions"/>
+        <property name="feePerTransaction" column="fee_per_transaction"/>
+        <property name="annualFee" column="annual_fee"/>
+         <property name="costItemId" column="cost_item_id"/>
+          <property name="tier" column="tier"/>   
+    </class>
+    
     <class name="Customer" table="Customer">
         <id name="id" column="customer_id">
             <generator class="increment"/>
@@ -46,6 +98,7 @@
         <!-- property name="state" column="state"/ -->
         <property name="projectSponsor" column="project_sponsor"/>
         <property name="sponsorPhone" column="sponsor_phone"/>
+        <property name="sfdcOpportunity" column="sfdc_opportunity"/>
         <many-to-one name="country" 
                      class="Country"
                      column="country_code" 

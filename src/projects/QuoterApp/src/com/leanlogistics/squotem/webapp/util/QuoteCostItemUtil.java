@@ -39,6 +39,11 @@ public class QuoteCostItemUtil {
         quoteEntryQuote.setCategorizedQuoteCostItems(cqcis);        
     }
     
+    public static List<CategorizedQuoteCostItem> getCategorizedQuoteProducts(Quote q, SquotemService service, boolean includeOnlyCurrentValues) {
+        return getCategorizedQuoteCostItems(q, service, includeOnlyCurrentValues, true);
+    }
+    
+    
     public static List<CategorizedQuoteCostItem> getCategorizedQuoteCostItems(Quote q, SquotemService service, boolean includeOnlyCurrentValues) {
         return getCategorizedQuoteCostItems(q, service, includeOnlyCurrentValues, true);
     }

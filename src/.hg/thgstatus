@@ -1,4 +1,12 @@
+mprojects/Quoter/src/com/leanlogistics/squotem/model
 mprojects/Quoter/src/com/leanlogistics/squotem/resources
+mprojects/Quoter/src/com/leanlogistics/squotem/service
+mprojects/QuoterApp/WebContent/WEB-INF
 mprojects/QuoterApp/WebContent/WEB-INF/views
+mprojects/QuoterApp/WebContent/css
 mprojects/QuoterApp/WebContent/images
+mprojects/QuoterApp/WebContent/js
 mprojects/QuoterApp/src
+mprojects/QuoterApp/src/com/leanlogistics/squotem/webapp/controller
+mprojects/QuoterApp/src/com/leanlogistics/squotem/webapp/screenobjects
+mprojects/QuoterApp/src/com/leanlogistics/squotem/webapp/util

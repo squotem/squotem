@@ -1,5 +1,6 @@
 package com.leanlogistics.squotem.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -16,32 +17,37 @@ import com.leanlogistics.squotem.exceptions.QuoteEditException;
 import com.leanlogistics.squotem.exceptions.QuoterStatusChangeException;
 import com.leanlogistics.squotem.model.BusinessSector;
 import com.leanlogistics.squotem.model.Country;
+import com.leanlogistics.squotem.model.Customer;
+import com.leanlogistics.squotem.model.License;
 import com.leanlogistics.squotem.model.MTSMatrix;
+import com.leanlogistics.squotem.model.Matrix;
+import com.leanlogistics.squotem.model.MatrixCostAdjustment;
+import com.leanlogistics.squotem.model.MatrixCostItem;
 import com.leanlogistics.squotem.model.MatrixMetric;
 import com.leanlogistics.squotem.model.MatrixRiskAnalysis;
+import com.leanlogistics.squotem.model.PerTransactionPricing;
+import com.leanlogistics.squotem.model.ProductCategory;
+import com.leanlogistics.squotem.model.Quote;
+import com.leanlogistics.squotem.model.QuoteCostAdjustment;
+import com.leanlogistics.squotem.model.QuoteCostItem;
 import com.leanlogistics.squotem.model.QuoteCosts;
 import com.leanlogistics.squotem.model.QuoteMTSCosts;
 import com.leanlogistics.squotem.model.QuoteMTSRoleCost;
 import com.leanlogistics.squotem.model.QuoteMTSScopeAnswer;
+import com.leanlogistics.squotem.model.QuoteMetric;
 import com.leanlogistics.squotem.model.QuoteNote;
 import com.leanlogistics.squotem.model.QuoteProduct;
 import com.leanlogistics.squotem.model.QuoteQuery;
 import com.leanlogistics.squotem.model.QuoteRiskAnalysis;
 import com.leanlogistics.squotem.model.State;
-import com.leanlogistics.squotem.model.Customer;
-import com.leanlogistics.squotem.model.Matrix;
-import com.leanlogistics.squotem.model.MatrixCostAdjustment;
-import com.leanlogistics.squotem.model.MatrixCostItem;
-import com.leanlogistics.squotem.model.ProductCategory;
-import com.leanlogistics.squotem.model.Quote;
-import com.leanlogistics.squotem.model.QuoteCostAdjustment;
-import com.leanlogistics.squotem.model.QuoteCostItem;
-import com.leanlogistics.squotem.model.QuoteMetric;
+import com.leanlogistics.squotem.model.SubscriptionPricing;
+import com.leanlogistics.squotem.model.TieredPricing;
 import com.leanlogistics.squotem.model.User;
 import com.leanlogistics.squotem.service.manager.CatalogsManager;
 import com.leanlogistics.squotem.service.manager.CustomerManager;
 import com.leanlogistics.squotem.service.manager.MTSMatrixManager;
 import com.leanlogistics.squotem.service.manager.MatrixManager;
+import com.leanlogistics.squotem.service.manager.PricingManager;
 import com.leanlogistics.squotem.service.manager.QuoteManager;
 import com.leanlogistics.squotem.service.manager.UserManager;
 
@@ -83,6 +89,105 @@ public class SquotemServiceBean implements SquotemService {
         return u;        
     }
 
+    @Override
+    public List<SubscriptionPricing> getSubscriptionPricing( ) {
+        Session session = sessionFactory.openSession();
+        session.setDefaultReadOnly(true);
+        Transaction tx = null;
+        List<SubscriptionPricing> pricingList = new ArrayList<SubscriptionPricing>();    
+        try {
+            
+            tx = session.beginTransaction();        
+        
+            PricingManager mgr = new PricingManager();
+            mgr.setHibernateSession(session);        
+            pricingList = mgr.getSubscriptionPricing();
+        
+            tx.commit();
+        }
+        catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx!=null) tx.rollback();
+        } finally {
+            session.close();            
+        }
+        return pricingList;        
+    }
+    
+    @Override
+    public List<License> getLicensePricing( ) {
+        Session session = sessionFactory.openSession();
+        session.setDefaultReadOnly(true);
+        Transaction tx = null;
+        List<License> pricingList = new ArrayList<License>();    
+        try {
+            
+            tx = session.beginTransaction();        
+        
+            PricingManager mgr = new PricingManager();
+            mgr.setHibernateSession(session);        
+            pricingList = mgr.getLicensePricing();
+        
+            tx.commit();
+        }
+        catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx!=null) tx.rollback();
+        } finally {
+            session.close();            
+        }
+        return pricingList;        
+    }
+    
+    @Override
+    public List<TieredPricing> getTieredPricing() {
+        Session session = sessionFactory.openSession();
+        session.setDefaultReadOnly(true);
+        Transaction tx = null;
+        List<TieredPricing> pricingList = new ArrayList<TieredPricing>();    
+        try {
+            
+            tx = session.beginTransaction();        
+        
+            PricingManager mgr = new PricingManager();
+            mgr.setHibernateSession(session);        
+            pricingList = mgr.getTieredPricing();
+        
+            tx.commit();
+        }
+        catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx!=null) tx.rollback();
+        } finally {
+            session.close();            
+        }
+        return pricingList;        
+    }
+    
+    @Override
+    public List<PerTransactionPricing> getPerTransactionPricing() {
+        Session session = sessionFactory.openSession();
+        session.setDefaultReadOnly(true);
+        Transaction tx = null;
+        List<PerTransactionPricing> pricingList = new ArrayList<PerTransactionPricing>();    
+        try {
+            
+            tx = session.beginTransaction();        
+        
+            PricingManager mgr = new PricingManager();
+            mgr.setHibernateSession(session);        
+            pricingList = mgr.getPerTransactionPricing();
+        
+            tx.commit();
+        }
+        catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx!=null) tx.rollback();
+        } finally {
+            session.close();            
+        }
+        return pricingList;        
+    }
     @Override
     public List<Customer> getCustomers() {
         Session session = sessionFactory.openSession();

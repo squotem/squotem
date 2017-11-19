@@ -22,33 +22,33 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.leanlogistics.squotem.co.CustomerTypeCO;
 import com.leanlogistics.squotem.co.FeeCategoryCO;
+import com.leanlogistics.squotem.co.MTSScopeAnswerCO;
 import com.leanlogistics.squotem.co.MetricGroupCO;
 import com.leanlogistics.squotem.co.QuoteWorkflowStatusCO;
 import com.leanlogistics.squotem.co.SpecialQuoteCostItemCO;
 import com.leanlogistics.squotem.co.UserTypeCO;
-import com.leanlogistics.squotem.co.MTSScopeAnswerCO;
 import com.leanlogistics.squotem.exceptions.QuoteEditException;
 import com.leanlogistics.squotem.exceptions.QuoterStatusChangeException;
+import com.leanlogistics.squotem.model.License;
 import com.leanlogistics.squotem.model.Matrix;
+import com.leanlogistics.squotem.model.PerTransactionPricing;
 import com.leanlogistics.squotem.model.ProductCategory;
 import com.leanlogistics.squotem.model.Quote;
 import com.leanlogistics.squotem.model.QuoteCostAdjustment;
 import com.leanlogistics.squotem.model.QuoteCostItem;
-import com.leanlogistics.squotem.model.QuoteCosts;
 import com.leanlogistics.squotem.model.QuoteMTSCosts;
 import com.leanlogistics.squotem.model.QuoteMTSRoleCost;
 import com.leanlogistics.squotem.model.QuoteMTSScopeAnswer;
 import com.leanlogistics.squotem.model.QuoteMetric;
 import com.leanlogistics.squotem.model.QuoteProduct;
 import com.leanlogistics.squotem.model.QuoteRiskAnalysis;
-import com.leanlogistics.squotem.model.QuoteSubtotal;
+import com.leanlogistics.squotem.model.SubscriptionPricing;
+import com.leanlogistics.squotem.model.TieredPricing;
 import com.leanlogistics.squotem.model.User;
 import com.leanlogistics.squotem.service.SquotemService;
-import com.leanlogistics.squotem.service.manager.QuoteManager;
 import com.leanlogistics.squotem.webapp.screenobjects.CategorizedQuoteCostItem;
 import com.leanlogistics.squotem.webapp.screenobjects.CategorizedQuoteMetric;
 import com.leanlogistics.squotem.webapp.screenobjects.CostItemForQuote;
-import com.leanlogistics.squotem.webapp.screenobjects.CustomerQuoteItem;
 import com.leanlogistics.squotem.webapp.screenobjects.QuoteEntryCustomer;
 import com.leanlogistics.squotem.webapp.screenobjects.QuoteEntryCustomerQuote;
 import com.leanlogistics.squotem.webapp.screenobjects.QuoteEntryMTS;
@@ -58,7 +58,6 @@ import com.leanlogistics.squotem.webapp.screenobjects.QuoteEntryRiskAnalysis;
 import com.leanlogistics.squotem.webapp.util.QuoteCostItemUtil;
 import com.leanlogistics.squotem.webapp.util.QuoteCustomerQuoteUtil;
 import com.leanlogistics.squotem.webapp.util.QuoteMTSUtil;
-import com.leanlogistics.squotem.webapp.util.QuoteMailSender;
 import com.leanlogistics.squotem.webapp.util.QuoteMetricUtil;
 import com.leanlogistics.squotem.webapp.util.QuoteRiskAnalysisUtil;
 
@@ -76,9 +75,15 @@ public class EntryController {
     private static final String CATEGORIZED_QUOTE_METRIC_QUALIFICATION    = "categorizedQuoteMetricQualification";
     private static final String CATEGORIZED_QUOTE_METRIC_BUSINESS_SCOPING = "categorizedQuoteMetricBusinessScoping";
     private static final String CATEGORIZED_QUOTE_COST_ITEM               = "categorizedQuoteCostItem";
+    private static final String SUBSCRIPTION_PRICING               		  = "subscriptionPricing";
+    private static final String LICENSE_PRICING               		  	  = "licensePricing";
+    private static final String TIERED_PRICING               		      = "tieredPricing";
+    private static final String PER_TRANSACTION_PRICING               	  = "perTransactionPricing";
     private static final String PROCESSED_QUOTE_PRODUCTS                  = "processedQuoteProducts";
     private static final String PROCESSED_QUOTE_ANSWERS                   = "processedQuoteAnswers";
     private static final String QUOTE_MTS_COSTS                           = "mtsCosts";
+    private static final int GTN_QUOTE_MATRIX                           = 3;
+
 	
     @Autowired
     private SquotemService service;
@@ -855,30 +860,55 @@ public class EntryController {
             form.setCategorizedQuoteMetrics(
             		(List<CategorizedQuoteMetric>) session.getAttribute(CATEGORIZED_QUOTE_METRIC_BUSINESS_SCOPING)
             	);
-            
-            // move this to entryCustomer            
+             // move this to entryCustomer            
             //QuoteCostItemUtil.populateCategorizedQuoteCostItems(form, q, service); 
             // but I need here the part that populates the screen object, so I'll split the proc and get it from session
             
             // first update lists, then update cost items, I need to populate this list 
             List<CategorizedQuoteCostItem> cqcis = QuoteCostItemUtil.getCategorizedQuoteCostItems(q, service, false); // What if matrix changes???
             session.setAttribute(CATEGORIZED_QUOTE_COST_ITEM, cqcis); 
+            
+            List<SubscriptionPricing> pricingList = new ArrayList<SubscriptionPricing>();
+            pricingList=service.getSubscriptionPricing();
+            session.setAttribute(SUBSCRIPTION_PRICING, pricingList);
+            
+            List<License> licensePricing = new ArrayList<License>();
+            licensePricing=service.getLicensePricing();
+            session.setAttribute(LICENSE_PRICING, licensePricing);
+            
+            List<TieredPricing> tieredPricing = new ArrayList<TieredPricing>();
+            tieredPricing=service.getTieredPricing();
+            session.setAttribute(TIERED_PRICING, tieredPricing);
+            
+            List<PerTransactionPricing> perTransactionPricing = new ArrayList<PerTransactionPricing>();
+            perTransactionPricing=service.getPerTransactionPricing();
+            session.setAttribute(PER_TRANSACTION_PRICING, perTransactionPricing);
+            
                   
             // just for the validation process
             List<CategorizedQuoteMetric> cqm = QuoteMetricUtil.getCategorizedQuoteMetrics(service.getMatrixMetrics(q.getMatrix()), q.getQuoteMetrics(), false);
             QuoteCostItemUtil.processCategorizedQuoteCostItemsErrorMessages(cqcis, cqm);
             
             form.setCategorizedQuoteCostItems(cqcis);
-
-            
+            form.setSubscriptionPricingList(pricingList);
+            form.setLicensePricingList(licensePricing);
+            form.setPerTransactionPricingList(perTransactionPricing);
+            form.setTieredPricingList(tieredPricing);
             /* Add objects required in model */
             // Command object            
             modelAndView.addObject("command", form);
             modelAndView.addObject("specialValues", SpecialQuoteCostItemCO.values());
                         
             modelAndView.addObject("sidebar", "quote");
+            if(q.getMatrix().getId()==GTN_QUOTE_MATRIX)
+            {
+            	 modelAndView.setViewName("entryGTNQuote");
+            }
+            else{
+            	
+                modelAndView.setViewName("entryQuote");
+            }
             
-            modelAndView.setViewName("entryQuote");
             return modelAndView;
     }
     
@@ -898,6 +928,7 @@ public class EntryController {
         List<CategorizedQuoteCostItem> cqcis = (List<CategorizedQuoteCostItem>) session.getAttribute(CATEGORIZED_QUOTE_COST_ITEM);
         QuoteCostItemUtil.updateQuoteCostItemValues(cqcis, quoteData.getCategorizedQuoteCostItems());
         session.setAttribute(CATEGORIZED_QUOTE_COST_ITEM, cqcis);
+        
         
         
         // update object in session

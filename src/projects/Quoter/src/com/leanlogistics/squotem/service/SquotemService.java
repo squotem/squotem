@@ -10,9 +10,11 @@ import com.leanlogistics.squotem.exceptions.QuoteEditException;
 import com.leanlogistics.squotem.exceptions.QuoterStatusChangeException;
 import com.leanlogistics.squotem.model.BusinessSector;
 import com.leanlogistics.squotem.model.Country;
+import com.leanlogistics.squotem.model.License;
 import com.leanlogistics.squotem.model.MTSMatrix;
 import com.leanlogistics.squotem.model.MatrixMetric;
 import com.leanlogistics.squotem.model.MatrixRiskAnalysis;
+import com.leanlogistics.squotem.model.PerTransactionPricing;
 import com.leanlogistics.squotem.model.QuoteCosts;
 import com.leanlogistics.squotem.model.QuoteMTSCosts;
 import com.leanlogistics.squotem.model.QuoteMTSRoleCost;
@@ -31,6 +33,8 @@ import com.leanlogistics.squotem.model.Quote;
 import com.leanlogistics.squotem.model.QuoteCostAdjustment;
 import com.leanlogistics.squotem.model.QuoteCostItem;
 import com.leanlogistics.squotem.model.QuoteMetric;
+import com.leanlogistics.squotem.model.SubscriptionPricing;
+import com.leanlogistics.squotem.model.TieredPricing;
 import com.leanlogistics.squotem.model.User;
 
 public interface SquotemService {
@@ -201,5 +205,13 @@ public interface SquotemService {
 	List<User> getNotificationList(QuoteWorkflowStatusCO status);
 
 	void freezeQuote(Quote q) throws QuoteEditException, HibernateException;
+
+	List<SubscriptionPricing> getSubscriptionPricing();
+
+	List<License> getLicensePricing();
+
+	List<TieredPricing> getTieredPricing();
+
+	List<PerTransactionPricing> getPerTransactionPricing();
                 
 }
